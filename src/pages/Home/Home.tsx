@@ -1,22 +1,27 @@
-import React, { useState } from 'react';
+import React, { useEffect } from 'react';
 import { DataGrid, GridRenderCellParams } from '@mui/x-data-grid';
 import { People } from '@/data/people.ts';
 import { Person } from '@/models';
 import { Checkbox } from '@mui/material';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
+import { addFavorites, addPeople, removeFavorites } from '@/redux/states';
+import { AppStore } from '@/redux/store.ts';
 
 const Home: React.FC = () => {
-  const [selectedPeople, setSelectedPeople] = useState<Person[]>([]);
   const pageSize = 5;
   const dispatch = useDispatch();
+  const statePeople = useSelector((store: AppStore) => store.people);
+  const favoritePeople = useSelector((store: AppStore) => store.favorites);
 
-  const findPerson = (person: Person) => !!selectedPeople.find((p) => p.id === person.id);
-  const filterPerson = (person: Person) => selectedPeople.filter((p) => p.id !== person.id);
+  const findPerson = (person: Person) => !!favoritePeople.find(p => p.id === person.id);
 
-  const onHandleChange = (person: Person)  => {
-    const filteredPeople = setSelectedPeople(findPerson(person) ? filterPerson(person) : [...selectedPeople, person] )
-    dispatch(addFavorite(filteredPeople))
-  }
+  const handleChange = (person: Person) => {
+    if (findPerson(person)) {
+      dispatch(removeFavorites(person))
+      return;
+    }
+    dispatch(addFavorites(person));
+  };
 
   const columns=[
     {
@@ -29,7 +34,7 @@ const Home: React.FC = () => {
         <Checkbox
           size="small"
           checked={findPerson(params.row)}
-          onChange={() => onHandleChange(params.row)}
+          onChange={() => handleChange(params.row)}
         />
       }</>
     },
@@ -54,10 +59,16 @@ const Home: React.FC = () => {
     }
   ]
 
+  useEffect(() => {
+      dispatch(addPeople(People))
+    }
+    , []
+  );
+
   return (
     <>
       <DataGrid
-        rows={People}
+        rows={statePeople}
         columns={columns}
         disableColumnSelector
         initialState={{
@@ -70,7 +81,7 @@ const Home: React.FC = () => {
         autoHeight
         paginationMode="client"
         pageSizeOptions={[pageSize]}
-        getRowId={(row: any) => row.id}
+        getRowId={(row: Person) => row.id}
         disableRowSelectionOnClick
       />
     </>
