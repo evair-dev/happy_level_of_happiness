@@ -56,6 +56,12 @@ const Home: React.FC = () => {
       headerName: 'Company',
       flex: 1,
       renderCell: (params: GridRenderCellParams) => <>{params.value}</>
+    },
+    {
+      field: 'levelOfHappiness',
+      headerName: 'Level of happiness',
+      flex: 1,
+      renderCell: (params: GridRenderCellParams) => <>{params.value}</>
     }
   ]
 

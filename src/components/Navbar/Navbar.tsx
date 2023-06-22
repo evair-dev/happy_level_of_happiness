@@ -20,7 +20,7 @@ const Navbar: React.FC = () => {
       <AppBar position="fixed">
         <Toolbar>
           <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
-            News
+            Employee Happiness
           </Typography>
           <IconButton color="secondary" aria-label="favorites" component="label" onClick={handleClick}>
             <FavoriteIcon />
